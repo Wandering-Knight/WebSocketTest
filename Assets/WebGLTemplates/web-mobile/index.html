@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>8 LION RISE</title>
+    <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+    <meta id="mf" name="viewport" content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1" />
+    
+    <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- force webkit on 360 -->
+    <meta name="renderer" content="webkit" />
+    <meta name="force-rendering" content="webkit" />
+    <!-- force edge on IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- force full screen on some browser -->
+    <meta name="full-screen" content="yes" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+
+    <!-- force screen orientation on some browser -->
+    <meta name="screen-orientation" content="" />
+    <meta name="x5-orientation" content="">
+
+    <!--fix fireball/issues/3568 -->
+    <!--<meta name="browsermode" content="application">-->
+    <meta name="x5-page-mode" content="app">
+
+    <!--<link rel="apple-touch-icon" href=".png" />-->
+    <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
+
+
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache"> 
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
+    <META HTTP-EQUIV="expires" CONTENT="0">
+
+    <link rel="shortcut icon" href="TemplateData/favicon.png">
+    <link rel="stylesheet" href="TemplateData/style.css">
+</head>
+
+<!-- <body onresize="ScreenSizeChange()"> -->
+
+<body>
+    <!-- <div id="loadingGif"></div> -->
+    <div id="unity-container" class="unity-desktop" style="width: 100%; height: 100%; z-index:-1">
+        <canvas id="unity-canvas" style="width: 100%; height: 100%"></canvas>
+    </div>
+    <!-- <div id="helpView">
+        <iframe id="helpFrame" src="./HelpView/Help.html"></iframe>
+    </div> -->
+    <!-- <script src="./AudioController.js"></script> -->
+    
+    <!-- <script src="./Script/NoSleep.min.js"></script>
+    <script src="./Script/NoSleep.js"></script> -->
+    <script>
+        // // 定义 preventDefault 函数来阻止默认行为
+        // function preventDefault(e) {
+        //     e.preventDefault();  // 阻止页面滚动
+        // }
+
+        // 添加事件监听器，禁用触摸滑动
+        // window.addEventListener('touchmove', preventDefault, { passive: false });
+		
+		// 检测参数并动态加载脚本
+        /*
+        if (GetUrlParamFun("DevelopMode") !== null) {
+            const script = document.createElement('script');
+            script.src = './Script/MobileLog.js';
+            document.head.appendChild(script);
+        }
+        let CustomerType = {
+            None:"None",
+            LightWonder:"LightWonder",
+            Entain:"Entain"
+        }
+            */
+        //当前环境，如果在别的指定环境可以通过Message或其他方式修改该属性
+        // let customerType = CustomerType.None;
+        // var lightWonderCustomerData = null;
+        // var entainCustomerData = null;
+
+        // window.addEventListener("message", function (e) {
+        //     if (gameInstance) {
+        //         //储存当前环境
+        //         if(e.data["eventName"] == "SetCustomer"){
+        //             customerType = e.data["CustomerType"];
+        //             lightWonderCustomerData = e.data["LightWonderEventData"];
+        //             entainCustomerData = e.data["EntainEventData"];
+        //             //CheckCustomer();
+        //             gameInstance.SendMessage("MainCamera", "JSCall_SetCustomer", customerType);
+        //             return;
+        //         }
+        //         if(e.data["eventName"] == "GetGameData"){
+        //             SendGameData();
+        //         }
+        //         //LightWonder
+        //         if (lightWonderCustomerData) {
+        //             //console.log("Recive RCM MSG: ");
+        //             console.log(lightWonderCustomerData);
+        //             if (e.data["eventName"] == lightWonderCustomerData.resume) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWResume", JSON.parse(e.data)["eventData"]);
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.setOGSParams) {
+        //                 //console.error("setOGSParams not finish");
+        //                 //gameInstance.SendMessage("MainCamera", "JSCall_LWResume", JSON.parse(e.data)["eventData"]);
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.paidUpdateResponse) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWResume", JSON.parse(e.data)["eventData"]);
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.balancesUpdateResponse) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWBalanceUpdate", JSON.parse(e.data)["eventData"]);
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.balancesHasChanged) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWBalanceChange", e.data.eventData.amount);
+        //             }
+        //             //ReciveGCMEvent中没找到这个事件。。
+        //             //if (e.data["eventName"] == lightWonderCustomerData.formatAmountResonse) {
+        //                 //gameInstance.SendMessage("MainCamera", "JSCall_LWBalanceChange", JSON.parse(e.data)["eventData"]);
+        //             //}
+        //             if (e.data["eventName"] == lightWonderCustomerData.getOgsClientToken) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWGetOGSClientToken");
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.optionHasChanged) {
+        //                 //console.warn("暂时不确定多个参数传递是否这样调用")
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWOptionHasChange",JSON.stringify({optionType:e.data["eventData"]["option"], value:e.data["eventData"]["value"]}));
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.stopAutoPlay) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWStopAutoSpin");
+        //             }
+        //             if (e.data["eventName"] == lightWonderCustomerData.handleFreeRoundsUpdate) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_LWFreeRoundsUpdate", JSON.parse(e.data)["eventData"]);
+        //             }
+                    
+        //         }
+        //         //Entain
+        //         if (customerType == CustomerType.Entain) {
+        //             if (e.data["eventName"] == entainCustomerData.pauseGame) {
+        //                 gameInstance.SendMessage("MainCamera", "StopGame");
+        //             }
+        //             if (e.data["eventName"] == entainCustomerData.resumeGame) {
+        //                 gameInstance.SendMessage("MainCamera", "ContinueGame");
+        //             }
+        //             if (e.data["eventName"] == entainCustomerData.closeGame) {
+        //                 //gameInstance.SendMessage("MainCamera", "ContinueGame");
+        //                 window.close();
+        //             }
+        //             if (e.data["eventName"] == entainCustomerData.updateBalance) {
+        //                 //应该需要传参吧
+        //                 gameInstance.SendMessage("MainCamera", "ContinueGame", JSON.parse(e.data)["eventData"]);
+        //             }
+        //             if (e.data["eventName"] == entainCustomerData.enableAudio) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_EnableAudio");
+        //             }
+        //             if (e.data["eventName"] == entainCustomerData.disableAudio) {
+        //                 gameInstance.SendMessage("MainCamera", "JSCall_DisableAudio");
+        //             }
+        //         }
+        //     }else{
+        //         console.error("The game is not loaded.   data:");
+        //         console.error(e.data);
+        //     }
+        // });
+		
+        // function SendGameData(){
+        //     SendMsg(false, JSON.stringify({"type":"SetGameData", "GameName": document.title}));
+        // }
+		
+        // let wakeLock = null;
+
+        // async function requestWakeLock() {
+        //     try {
+        //         console.log("wake lock: " + ('wakeLock' in navigator));
+        //         if ('wakeLock' in navigator) {
+        //             wakeLock = await navigator.wakeLock.request('screen');
+        //             wakeLock.addEventListener('release', () => {
+        //                 console.log('Wake Lock was released');
+        //             });
+        //         } else {
+        //             console.log('Wake Lock API is not supported in this browser');
+        //         }
+        //     } catch (err) {
+        //         console.error('Failed to acquire wake lock:', err);
+        //     }
+        // }
+        
+        // // 用户交互后请求唤醒锁
+        // document.body.addEventListener('click', () => {
+        //     requestWakeLock();
+        // });
+        
+        // // 如果页面已经可见，直接请求唤醒锁
+        // document.addEventListener('visibilitychange', () => {
+        //     if (document.visibilityState === 'visible') {
+        //         requestWakeLock();
+        //     }
+        // });
+        // 检测参数并动态加载脚本
+        if (GetUrlParamFun("DevelopMode") !== null) {
+            const script = document.createElement('script');
+            script.src = './Script/MobileLog.js';
+            document.head.appendChild(script);
+        }
+    
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+
+        // var helpView = document.getElementById("helpView");
+        // var helpFrame = document.getElementById("helpFrame");
+        window.addEventListener("load", function () {
+            CheckPlatform();
+        });
+        // helpFrame.addEventListener("load", function () {
+        //     helpFrame.contentWindow.document.getElementById("closeBtn").onclick = function () {
+        //         HideHelpFrame();
+        //     }
+        // }, false);
+        // Shows a temporary message banner/ribbon for a few seconds, or
+        // a permanent error message on top of the canvas if type=='error'.
+        // If type=='warning', a yellow highlight color is used.
+        // Modify or remove this function to customize the visually presented
+        // way that non-critical warnings and error messages are presented to the
+        // user.
+        function unityShowBanner(msg, type) {
+            console.log("unity show banner");
+        }
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/build.loader.js";
+        var config = {
+            TOTAL_MEMORY: 536870912,
+            INITIAL_MEMORY : 512,
+            dataUrl: buildUrl + "/build.data.br",
+            frameworkUrl: buildUrl + "/build.framework.js.br",
+            codeUrl: buildUrl + "/build.wasm.br",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "Coin Explosion",
+            productVersion: "1.0",
+            showBanner: unityShowBanner,
+        };
+
+        // By default Unity keeps WebGL canvas render target size matched with
+        // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+        // Set this to false if you want to decouple this synchronization from
+        // happening inside the engine, and you would instead like to size up
+        // the canvas DOM size and WebGL render target sizes yourself.
+        // config.matchWebGLToCanvasSize = false;
+        function CheckPlatform(){
+            // console.log(/iPhone|iPad|iPod/i.test(navigator.userAgent));
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                container.className = "unity-mobile";
+                // Avoid draining fillrate performance on mobile devices,
+                // and default/override low DPI mode on mobile browsers.
+                config.devicePixelRatio = 1;
+                //var headConfig = document.getElementById("mf");
+                //headConfig.remove();
+                // console.log("remove head config");
+            } else {
+                // if(typeof window.orientation !== 'undefined'){
+                //     //android
+                //     container.style.width = "";
+                //     container.style.height = "";
+                //     canvas.style.width = "";
+                //     canvas.style.height = "";
+                // }
+            }
+        }
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        var gameInstance;
+        script.onload = () => {
+            // const noSleep = new NoSleep();
+            // noSleep.enable(); // 启用防休眠
+            if(LocalStorageManager.getItem("CrashPoint") != null){
+                console.warn(LocalStorageManager.getItem("CrashPoint"));
+            }
+            createUnityInstance(canvas, config, (progress) => { }).then((unityInstance) => {
+                document.getElementById("loadingGif").style.visibility = 'hidden';
+                document.body.style.height = 0;
+                document.body.style.width = 0;
+                //unityInstance.SetFullscreen(1);
+                gameInstance = unityInstance;
+                //ScreenSizeChange();
+                //gameInstance.SendMessage("MainCamera", "ChangeDesignResolution", "fromjs");
+                // window.parent.postMessage({type: "GetCustomer"}, "*");
+                document.addEventListener('visibilitychange', () => {
+                    // console.log("Hidden: " + document.hidden);
+                    // if (document.visibilityState == "visible") {
+                    if(document.hidden == false){
+                        //continue
+                        ContinueGame();
+                        // console.log("Continue Game");
+                    } else {
+                        //stop
+                        StopGame();
+                        // console.log("Stop Game");
+                    }
+                })
+
+
+                
+
+
+                // // 全局 WebSocket 实例
+                // window.__unityWs = null;
+
+                // // 由 .jslib 调用
+                // window.UnityWebSocketConnect = function (url) {
+                //     window.__unityWs = new WebSocket(url);
+
+                //     window.__unityWs.onmessage = function (event) {
+                //         unityInstance.SendMessage('WebSocketManager', 'OnMessage', event.data);
+                //     };
+
+                //     window.__unityWs.onclose = function (event) {
+                //         var reason = event.reason || ("Code: " + event.code);
+                //         unityInstance.SendMessage('WebSocketManager', 'OnClose', reason);
+                //     };
+
+                //     window.__unityWs.onerror = function (event) {
+                //         unityInstance.SendMessage('WebSocketManager', 'OnError', "WebSocket error");
+                //     };
+                // };
+
+                // window.UnityWebSocketSend = function (data) {
+                //     if (window.__unityWs && window.__unityWs.readyState === WebSocket.OPEN) {
+                //         window.__unityWs.send(data);
+                //         return true;
+                //     }
+                //     return false;
+                // };
+
+                // window.UnityWebSocketClose = function () {
+                //     if (window.__unityWs) {
+                //         window.__unityWs.close();
+                //         window.__unityWs = null;
+                //     }
+                // };
+                
+
+
+
+                window.addEventListener("message", function (e) {
+                    if(e.data.toString().indexOf("refresh") != -1){
+                        gameInstance.SendMessage("MainCamera", "JsCall_RefreshSessionCreate");
+                    }
+                    //注意Unity版本的RGS将玩家选择信息存储到了PlayPref中，并非localStorage中，因此无法在加载阶段更改Audio等级
+                    if(e.data.toString().indexOf("switchSoundLevel") != -1){
+                        gameInstance.SendMessage("MainCamera", "JsCall_SwitchSoundLevel", JSON.parse(e.data)["switchSoundLevel"]["soundLevel"]);
+                    }
+
+                    ////////////////PariplayEvent/////////////////
+                    if(typeof e.data == "string") {
+                        if(JSON.parse(e.data)["type"] == "pause") {
+                            StopGame();
+                        }
+                        if(JSON.parse(e.data)["type"] == "resume") {
+                            ContinueGame();
+                        }
+                        if(JSON.parse(e.data)["type"] == "stopAutobet") {
+                            gameInstance.SendMessage("MainCamera", "JsCall_StopAutoBet");
+                        }
+                    }
+                    //////////////////////////////////////////////
+                });
+
+                    // 监听屏幕方向变化
+                window.addEventListener("orientationchange", function() {
+                    //var orientation = window.orientation;
+
+                    // 将方向信息传递给 Unity
+                    gameInstance.SendMessage("MainCamera", "MobileOrientationChange", window.orientation);
+                });
+            }).catch((message) => {
+                alert(message);
+            });
+
+        };
+        document.body.appendChild(script);
+
+
+
+        //解析链接参数，JS插件脚本使用
+        function GetUrlParamFun(paraName) {
+            var url = document.location.toString();
+            var arrObj = url.split("?");
+            if (arrObj != null && arrObj.length > 1) {
+                var arrPara = arrObj[1].split("&");
+                var arr;
+                for (var i in arrPara) {
+                    arr = arrPara[i].split("=");
+                    if (arr != null && arr[0] == paraName) {
+                        return decodeURIComponent(arr[1]);
+                    }
+                }
+                return null;
+            } else {
+                return null;
+            }
+        }
+
+        function GetUrl() {
+            return window.location.href;
+        }
+
+        function SetUrl(url, topPage) {
+            if(topPage){
+                window.location.replace(url)
+            }else{
+                window.top.location.replace(url)
+            }
+        }
+        // 检查 ancestorOrigins 是否支持
+        const targetOrigin = window.location.ancestorOrigins && window.location.ancestorOrigins[0]
+            ? window.location.ancestorOrigins[0]
+            : window.location.origin;  // 如果 ancestorOrigins 不支持，则使用当前页面的 origin
+
+
+        //跨域通讯 (传递给所有窗口"*", 传递给同源窗口"/"), Unity中调用
+        function SendMsg(topSend, msg) {
+            //console.log("RGSSendMessage:");
+            //console.log(msg);
+            if (topSend == true) {
+                parent.postMessage(msg, "*");
+            } else {
+                top.parent.postMessage(msg, "*");
+            }
+            window.parent.postMessage(JSON.parse(msg), targetOrigin);
+            CheckRGSMSG(msg);
+        }
+        function CheckRGSMSG(msg){
+            if(typeof msg === 'string' && msg.includes("LoadingEnd")){
+                gameInstance.SendMessage("MainCamera", "MobileOrientationChange", window.orientation);
+            }
+        }
+
+        function SendPariPlayEvent(sendMsg){
+            window.parent.postMessage(JSON.parse(sendMsg), '*');
+        }
+        function GetReferrer(){
+            return document.referrer;
+        }
+        //调用c# 测试
+        function ScreenSizeChange() {
+            var ScreenSize = {
+                width: canvas.clientWidth,
+                height: canvas.clientHeight
+            };
+            gameInstance.SendMessage("MainCamera", "ChangeDesignResolution", JSON.stringify(ScreenSize));
+        }
+
+        function Confirm(message) {
+            return confirm(message);
+        }
+        //刷新网页，由Unity调用
+        function Reload() {
+            console.log("Reload Windows");
+            window.location.reload();
+        }
+
+        //string转换为函数
+        function EvalFunction(paramName) {
+            var hrefFunc = GetUrlParamFun(paramName);
+            if (hrefFunc != null) {
+                console.log("Eval Function: " + hrefFunc);
+                eval(hrefFunc);
+            } else {
+                console.log("Cannot convert to function");
+            }
+        }
+
+        function Back() {
+            console.log("back previous windows");
+            window.history.back();
+        }
+
+        function CloseWindow() {
+            console.log("CLose Window");
+            window.open("about:blank", '_self').close();
+        }
+
+        function ConsoleMsg(msg) {
+            //console.log(msg);
+        }
+
+        // function ShowHelpFrame() {
+        //     helpView.style.display='inline-block';
+        // }
+        // function HideHelpFrame() {
+        //     helpView.style.display='none';
+        //     gameInstance.SendMessage("HelpPanel(Clone)", "HideHelpFrame");
+        // }
+
+        // function WebAddFrameTitle (title){
+        //     //console.log("addTitle:  " + title);
+        //     titleElement = helpFrame.contentWindow.document.createElement("h3");
+        //     titleElement.innerHTML = "<h3>" + title + "</h3>";
+        //     helpFrame.contentWindow.document.body.appendChild(titleElement);
+        // }
+
+        // function WebAddFrameInfo(info){
+        //     var infoArr = info.split("\\n");
+        //     //有些翻译的换行符会被莫名其妙吞掉😅
+        //     if(infoArr.length == 1){
+        //         infoArr = info.split("\n");
+        //     }
+        //     //console.log("addInfo:  " + infoArr.length + "   " + info);
+        //     for(var i = 0; i < infoArr.length; i++){
+        //         var infoElement = helpFrame.contentWindow.document.createElement("p");
+        //         infoElement.innerHTML = "<p>" + infoArr[i] + "</p>";
+        //         infoElement.style.textAlign = "center";
+        //         infoElement.innerHTML = WebFrameFormat(infoElement.innerHTML)
+        //         helpFrame.contentWindow.document.body.appendChild(infoElement);
+        //     }
+        // }
+        // function WebAddTable(param){
+        //     infoElement = helpFrame.contentWindow.document.createElement("p");
+        //     infoElement.innerHTML = "<p>" + param + "</p>";
+        //     infoElement.style.textAlign = "center";
+        //     infoElement.innerHTML = WebFrameFormat(infoElement.innerHTML)
+        //     helpFrame.contentWindow.document.body.appendChild(infoElement);
+        // }
+        // function WebFrameFormat(info){
+        //     //info = info.replace("\\n", "");
+        //     while(true){
+        //         if(info.indexOf("<sprite=") != -1){
+        //             sourceStr = info.slice(info.indexOf("<sprite="), (info.indexOf('">') + 2));
+        //             //如果首字符大于尾字符或者首位字符相差大于30
+        //             if((sourceStr.indexOf('name="') + 'name="'.length) > sourceStr.indexOf('">') || (sourceStr.indexOf('name="') + 'name="'.length) - sourceStr.indexOf('">') > 30){
+        //                 console.log("格式化失败    " + info);
+        //                 break;
+        //             }
+        //             targetName = sourceStr.slice((sourceStr.indexOf('name="') + 'name="'.length), sourceStr.indexOf('">'));
+        //             //console.log(info + "   " + info.indexOf("<sprite=") + "   " + (info.indexOf('">') + 2));
+        //             //console.log(info.indexOf("<sprite="));
+        //             //console.log(sourceStr + "   " + targetName);
+
+        //             if (info.indexOf("transSpriteOriginalSize") != -1) {
+        //                 info = info.replace("transSpriteOriginalSize", "");
+        //                 var size = aimageSize(`HelpView/Sprite/${targetName}.png`);
+        //                 info = info.replace(sourceStr, `<img src="Sprite/${targetName}.png" alt="[${targetName}]" width=${size.width} height=${size.height} align="middle" > `)
+        //             } else {
+        //                 info = info.replace(sourceStr, `<img src="Sprite/${targetName}.png" alt="[${targetName}]" width=50 align="middle" > `);
+        //             }
+        //         }else{
+        //             break;
+        //         }
+        //     }
+        //     return info;
+
+        // }
+
+
+
+
+
+        // function getImageSize(url) {
+        //     return new Promise(function (resolve, reject) {
+        //         const image = new Image()
+        //         image.onload = function () {
+        //             resolve({
+        //                 width: image.width,
+        //                 height: image.height
+        //             })
+        //         }
+        //         image.onerror = function () {
+        //             reject(new Error('error'))
+        //         }
+        //         image.src = url
+        //     })
+        // }
+        // async function aimageSize(imgUrl) {
+        //     const size = await this.getImageSize(imgUrl)
+        //     //console.log(imgUrl + '    图片大小', size)
+        //   }
+        function StopGame() {
+            gameInstance.SendMessage("MainCamera", "StopGame");
+        }
+        function ContinueGame() {
+            gameInstance.SendMessage("MainCamera", "ContinueGame");
+        }
+        /*
+        function SetCustomer(customerType){
+            if(Object.values(CustomerType).includes(customerType)){
+                console.log(`Customer:  ${customerType}`)
+                gameInstance.SendMessage("MainCamera", "SetCustomer", customerType);
+            }else{
+                console.warn(`UnKnow Customer Type: ${customerType}`);
+            }
+        }
+        */
+        // function GetCustomer(){
+        //     //console.log("Customer:  " + customerType);
+        //     if(Object.values(CustomerType).includes(customerType)){
+        //         return customerType;
+        //     }else{
+        //         console.warn(`UnKnow Customer Type: ${customerType}`);
+        //     }
+        // }
+
+        function SetSessionStorage(key, value){
+            sessionStorage.setItem(key, value);
+        }
+        function GetSessionStorage(key){
+            return sessionStorage.getItem(key);
+        }
+
+        var LocalStorageManager = {
+            setItem: function(key, value) {
+                //console.log("SetLocalStorage:  " + key + "  " + value);
+                localStorage.setItem(key, value);
+            },
+            getItem: function(key) {
+                //console.log("GetLocalStorage:  " + key + "  " + localStorage.getItem(key));
+                return localStorage.getItem(key);
+            },
+            removeItem: function(key) {
+                //console.log("RemoveLocalStorage:  " + key + "  " + localStorage.getItem(key));
+                localStorage.removeItem(key);
+            },
+            clear: function() {
+                //console.log("ClearLocalStorage:  ");
+                localStorage.clear();
+            }
+        };
+        function ClearIndexedDB(){
+            //localStorage.clear(); // 清空本地存储
+            console.log("ClearIndexedDB");
+            indexedDB.deleteDatabase("UnityCache");
+            indexedDB.deleteDatabase("/idbfs");
+        }
+    </script>
+</body>
+
+</html>
