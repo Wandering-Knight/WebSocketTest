@@ -17,7 +17,7 @@ public class WebSocketTest3 : MonoBehaviour
 
     void Start()
     {
-        string wsUrl = "wss://slotgame.xin:8080";
+        string wsUrl = "wss://slotgame.xin:8081";
         ConnectToWebSocket(wsUrl);
     }
 

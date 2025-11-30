@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{AD02DC52-EB6B-1E0D-60A6-E3D5FAF93290}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "endel.nativewebsocket", "endel.nativewebsocket.csproj", "{41E03F8E-C149-8BC9-1952-07D2CD29D6EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{81080899-CCC6-4B07-C6E8-E097E0A51B01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD02DC52-EB6B-1E0D-60A6-E3D5FAF93290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD02DC52-EB6B-1E0D-60A6-E3D5FAF93290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD02DC52-EB6B-1E0D-60A6-E3D5FAF93290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD02DC52-EB6B-1E0D-60A6-E3D5FAF93290}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41E03F8E-C149-8BC9-1952-07D2CD29D6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41E03F8E-C149-8BC9-1952-07D2CD29D6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41E03F8E-C149-8BC9-1952-07D2CD29D6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41E03F8E-C149-8BC9-1952-07D2CD29D6EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81080899-CCC6-4B07-C6E8-E097E0A51B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81080899-CCC6-4B07-C6E8-E097E0A51B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81080899-CCC6-4B07-C6E8-E097E0A51B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81080899-CCC6-4B07-C6E8-E097E0A51B01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

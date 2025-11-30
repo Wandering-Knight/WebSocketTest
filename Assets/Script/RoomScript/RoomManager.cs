@@ -1,16 +1,17 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using NativeWebSocket;
+using SimpleJSON;
 using System;
 using System.Collections.Generic;
-using NativeWebSocket;
-using SimpleJSON;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
 
-// 注意：SimpleJSON 不需要 using，它定义在全局命名空间
+// 注意：SimpleJSON 不需要 using 命名空间（它在全局）
 
 public class RoomManager : MonoBehaviour
 {
     // --- UI 引用 ---
-    public InputField RoomInputField;           // 标准 UnityEngine.UI.InputField
+    public InputField RoomInputField;
     public Button CreateRoomButton;
     public Button JoinRoomButton;
     public Text StatusText;
@@ -22,11 +23,18 @@ public class RoomManager : MonoBehaviour
 
     // --- WebSocket ---
     private WebSocket ws;
+    //private WebSocket testWS;
     private string currentRoomId;
     private bool isWebSocketConnected = false;
 
-    void Start()
+    private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+    }
+    private async Task Start()
+    {
+
+        //Debug.Log(1);
         CreateRoomButton.onClick.AddListener(OnCreateRoomClicked);
         JoinRoomButton.onClick.AddListener(OnJoinRoomClicked);
 
@@ -36,15 +44,24 @@ public class RoomManager : MonoBehaviour
         ws.OnOpen += () =>
         {
             isWebSocketConnected = true;
-            UpdateUI("✅ 已连接到服务器");
+            UpdateUI("Connected to server.");
         };
 
         ws.OnMessage += OnWebSocketMessage;
         ws.OnError += OnWebSocketError;
         ws.OnClose += OnWebSocketClose;
 
-        ws.Connect();
-        UpdateUI("正在连接服务器...");
+        await ws.Connect();
+        UpdateUI("Connecting to server...");
+
+
+
+
+    }
+    int testLogCount = 0;
+    void DebugTestMsg(byte[] msg)
+    {
+        Debug.Log($"{++testLogCount}  {System.Text.Encoding.UTF8.GetString(msg)}");
     }
 
     void OnCreateRoomClicked()
@@ -52,7 +69,7 @@ public class RoomManager : MonoBehaviour
         string roomId = RoomInputField.text.Trim();
         if (string.IsNullOrEmpty(roomId))
         {
-            UpdateUI("请输入房间名称！");
+            UpdateUI("Please enter a room name!");
             return;
         }
         SendJoinRoomRequest(roomId);
@@ -63,7 +80,7 @@ public class RoomManager : MonoBehaviour
         string roomId = RoomInputField.text.Trim();
         if (string.IsNullOrEmpty(roomId))
         {
-            UpdateUI("请输入房间名称！");
+            UpdateUI("Please enter a room name!");
             return;
         }
         SendJoinRoomRequest(roomId);
@@ -73,34 +90,33 @@ public class RoomManager : MonoBehaviour
     {
         if (!isWebSocketConnected)
         {
-            UpdateUI("❌ 请等待连接成功后再操作");
+            UpdateUI("Error: Wait until connected.");
             return;
         }
 
         string playerId = "user_" + UnityEngine.Random.Range(10000, 99999);
         string username = "Player" + UnityEngine.Random.Range(1, 100);
 
-        // 手动构造 JSON 字符串（或用 SimpleJSON 构建，这里简单拼接）
         string json = $"{{\"type\":\"JOIN_ROOM\",\"roomId\":\"{roomId}\",\"playerId\":\"{playerId}\",\"username\":\"{username}\"}}";
         ws.SendText(json);
-        UpdateUI($"正在加入房间: {roomId}...");
+        UpdateUI($"Joining room: {roomId}...");
     }
 
     void OnWebSocketMessage(byte[] data)
     {
         string msg = System.Text.Encoding.UTF8.GetString(data);
-        Debug.Log("📡 收到服务器消息: " + msg);
+        Debug.Log("Received from server: " + msg);
 
         try
         {
             var json = JSON.Parse(msg);
-            if (json == null || !json.HasKey("type"))
+            if (json == null || json["type"] == null || json["type"].IsNull)
             {
-                Debug.LogWarning("无效的 JSON 消息");
+                Debug.LogWarning("Invalid JSON: missing 'type' field");
                 return;
             }
 
-            string type = json["type"];
+            string type = json["type"].Value;
 
             switch (type)
             {
@@ -114,74 +130,97 @@ public class RoomManager : MonoBehaviour
                     HandleError(json);
                     break;
                 default:
-                    Debug.LogWarning("未知消息类型: " + type);
+                    Debug.LogWarning("Unknown message type: " + type);
                     break;
             }
         }
         catch (Exception e)
         {
-            Debug.LogError("解析消息失败: " + e.Message + "\n原始数据: " + msg);
-            UpdateUI("❌ 消息解析失败");
+            Debug.LogError("Failed to parse message: " + e.Message + "\nRaw data: " + msg);
+            UpdateUI("Message parse error.");
         }
     }
 
     void HandleJoinSuccess(JSONNode json)
     {
-        string roomId = json["roomId"].Value; // 👈 也建议加 .Value
-        var playersArray = json["players"].AsArray;
-
-        var players = new List<PlayerInfo>();
-        foreach (var playerNode in playersArray)
-        {
-            players.Add(new PlayerInfo
-            {
-                playerId = playerNode.Key,
-                username = playerNode.Value
-            });
-        }
-
+        string roomId = json["roomId"]?.Value ?? "unknown";
+        ParseAndShowPlayers(json["players"]);
         currentRoomId = roomId;
-        UpdateUI($"🎉 成功进入房间: {currentRoomId}");
-        UpdatePlayerList(players.ToArray());
+        UpdateUI($"Joined room: {currentRoomId}");
     }
 
     void HandleRoomUpdate(JSONNode json)
     {
-        var playersArray = json["players"].AsArray;
-        var players = new List<PlayerInfo>();
-        foreach (var playerNode in playersArray)
-        {
-            players.Add(new PlayerInfo
-            {
-                playerId = playerNode.Key,
-                username = playerNode.Value
-            });
-        }
-        UpdatePlayerList(players.ToArray());
+        ParseAndShowPlayers(json["players"]);
     }
 
     void HandleError(JSONNode json)
     {
-        string message = json["message"] ?? "未知错误";
-        UpdateUI($"❌ 错误: {message}");
+        string message = json["message"]?.Value ?? "Unknown error";
+        UpdateUI($"Error: {message}");
+    }
+
+    void ParseAndShowPlayers(JSONNode playersNode)
+    {
+        var players = new List<PlayerInfo>();
+
+        if (playersNode == null || playersNode.IsNull || !playersNode.IsArray)
+        {
+            UpdatePlayerList(players.ToArray());
+            return;
+        }
+
+        var array = playersNode.AsArray;
+        if (array == null)
+        {
+            UpdatePlayerList(players.ToArray());
+            return;
+        }
+
+        foreach (JSONNode playerNode in array)
+        {
+            if (playerNode != null && !playerNode.IsNull && playerNode.IsObject)
+            {
+                string playerId = "";
+                string username = "";
+
+                var idNode = playerNode["playerId"];
+                if (idNode != null && !idNode.IsNull)
+                    playerId = idNode.Value;
+
+                var nameNode = playerNode["username"];
+                if (nameNode != null && !nameNode.IsNull)
+                    username = nameNode.Value;
+
+                if (!string.IsNullOrEmpty(playerId) || !string.IsNullOrEmpty(username))
+                {
+                    players.Add(new PlayerInfo
+                    {
+                        playerId = playerId,
+                        username = username
+                    });
+                }
+            }
+        }
+
+        UpdatePlayerList(players.ToArray());
     }
 
     void OnWebSocketError(string errorMsg)
     {
-        Debug.LogError("WebSocket 错误: " + errorMsg);
-        UpdateUI("❌ 连接失败: " + errorMsg);
+        Debug.LogError("WebSocket error: " + errorMsg);
+        UpdateUI("Connection failed: " + errorMsg);
     }
 
     void OnWebSocketClose(WebSocketCloseCode code)
     {
         isWebSocketConnected = false;
-        Debug.Log("WebSocket 连接关闭，代码: " + code);
-        UpdateUI("🔌 连接已断开");
+        Debug.Log("WebSocket closed, code: " + code);
+        UpdateUI("Connection closed.");
     }
 
     void UpdatePlayerList(PlayerInfo[] players)
     {
-        // 清理旧图标
         foreach (var icon in playerIconsList)
         {
             if (icon != null)
@@ -214,8 +253,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    // ================== 数据类（仅用于前端组织数据）==================
-
+    // ================== 数据类 ==================
     [Serializable]
     public class PlayerInfo
     {
@@ -223,12 +261,20 @@ public class RoomManager : MonoBehaviour
         public string username;
     }
 
-
+    // ⚠️ 必须调用！否则收不到消息（NativeWebSocket 要求）
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            OnCreateRoomClicked();
+        }
+
+#if UNITY_EDITOR
         if (ws != null && ws.State == WebSocketState.Open)
         {
             ws.DispatchMessageQueue();
         }
+
+#endif
     }
 }
