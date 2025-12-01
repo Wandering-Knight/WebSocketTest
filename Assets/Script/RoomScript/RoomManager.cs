@@ -1,15 +1,20 @@
 ﻿using NativeWebSocket;
 using SimpleJSON;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UniversalModule.DelaySystem;
 
 // 注意：SimpleJSON 不需要 using 命名空间（它在全局）
 
 public class RoomManager : MonoBehaviour
 {
+    public static RoomManager Instance { get; private set; }
     // --- UI 引用 ---
     public InputField RoomInputField;
     public Button CreateRoomButton;
@@ -27,9 +32,17 @@ public class RoomManager : MonoBehaviour
     private string currentRoomId;
     private bool isWebSocketConnected = false;
 
+
+    public string RoomID => RoomInputField.text;
+
+    AsyncOperation asyncLoad;
+
     private void Awake()
     {
+        Instance = this;
         DontDestroyOnLoad(gameObject);
+
+
     }
     private async Task Start()
     {
@@ -121,7 +134,7 @@ public class RoomManager : MonoBehaviour
             switch (type)
             {
                 case "JOIN_SUCCESS":
-                    HandleJoinSuccess(json);
+                    StartCoroutine(HandleJoinSuccess(json));
                     break;
                 case "ROOM_UPDATE":
                     HandleRoomUpdate(json);
@@ -141,12 +154,15 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void HandleJoinSuccess(JSONNode json)
+    IEnumerator HandleJoinSuccess(JSONNode json)
     {
         string roomId = json["roomId"]?.Value ?? "unknown";
         ParseAndShowPlayers(json["players"]);
         currentRoomId = roomId;
-        UpdateUI($"Joined room: {currentRoomId}");
+        //UpdateUI($"Joined room: {currentRoomId}");
+        UpdateUI($"Joined room: {currentRoomId} \n 即将进入游戏");
+        yield return new WaitForSeconds(3);
+        EnterGameScene();
     }
 
     void HandleRoomUpdate(JSONNode json)
@@ -276,5 +292,13 @@ public class RoomManager : MonoBehaviour
         }
 
 #endif
+    }
+
+    private void EnterGameScene()
+    {
+        asyncLoad = SceneManager.LoadSceneAsync("GameScene");
+        //asyncLoad.allowSceneActivation = false; // 防止自动激活
+        //Debug.Log("Entering Game Scene...");
+        asyncLoad.allowSceneActivation = true;
     }
 }

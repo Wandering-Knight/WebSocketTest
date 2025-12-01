@@ -61,12 +61,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Tools\ObjectPool\ComponentPoolOfStack.cs" />
+    <Compile Include="Assets\Script\FishScript\FishView.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayNodeWithArgs.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Wrapper\IInputField.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Wrapper\WrappedTMPInputField.cs" />
     <Compile Include="Assets\Tools\ObjectPool\ObjectPoolOfQueue.cs" />
     <Compile Include="Assets\Script\WebSocketTest2.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\WebGLInput.cs" />
+    <Compile Include="Assets\Script\FishScript\FishManager.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayNodeBase.cs" />
     <Compile Include="Assets\Script\RoomScript\PlayerIcon.cs" />
     <Compile Include="Assets\Tools\Singleton\MonoSingleton.cs" />
@@ -85,7 +87,6 @@
     <Compile Include="Assets\Script\GameController.cs" />
     <Compile Include="Assets\Tools\ObjectPool\PoolBuilder.cs" />
     <Compile Include="Assets\Tools\Singleton\PrivateMonoSingleton.cs" />
-    <Compile Include="Assets\Script\FishManager.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayHelper.cs" />
     <Compile Include="Assets\Script\WebSocketTest3.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayCallback.cs" />
