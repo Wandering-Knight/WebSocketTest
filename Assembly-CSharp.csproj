@@ -64,20 +64,25 @@
     <Compile Include="Assets\Script\FishScript\FishView.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayNodeWithArgs.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Wrapper\IInputField.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Wrapper\WrappedTMPInputField.cs" />
     <Compile Include="Assets\Tools\ObjectPool\ObjectPoolOfQueue.cs" />
     <Compile Include="Assets\Script\WebSocketTest2.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\WebGLInput.cs" />
     <Compile Include="Assets\Script\FishScript\FishManager.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayNodeBase.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\Script\RoomScript\PlayerIcon.cs" />
     <Compile Include="Assets\Tools\Singleton\MonoSingleton.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Mobile\WebGLInputMobile.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Detail\RebuildChecker.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLWindow\WebGLWindow.cs" />
     <Compile Include="Assets\ThirdParty\WebGLSupport\WebGLInput\Wrapper\WrappedInputField.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\Tools\ObjectPool\ComponentPoolOfQueue.cs" />
     <Compile Include="Assets\Script\RoomScript\RoomManager.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\Tools\InputField\RGSInputField.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelaySequence.cs" />
     <Compile Include="Assets\Tools\ObjectPool\ObjectPoolOfStack.cs" />
@@ -87,9 +92,12 @@
     <Compile Include="Assets\Script\GameController.cs" />
     <Compile Include="Assets\Tools\ObjectPool\PoolBuilder.cs" />
     <Compile Include="Assets\Tools\Singleton\PrivateMonoSingleton.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModulePhysics2D.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayHelper.cs" />
+    <Compile Include="Assets\Script\FishScript\BaseFish.cs" />
     <Compile Include="Assets\Script\WebSocketTest3.cs" />
     <Compile Include="Assets\Tools\DelaySystem\DelayCallback.cs" />
+    <Compile Include="Assets\ThirdParty\DOTween\Modules\DOTweenModuleSprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -102,9 +110,13 @@
     <None Include="Assets\Font\fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\LICENSE.txt" />
     <None Include="Assets\Link.xml" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\Font\HarmonyOS Sans\HarmonyOS_Sans\LICENSE.txt" />
+    <None Include="Assets\Font\HarmonyOS Sans\HarmonyOS_Sans_Naskh_Arabic\LICENSE.txt" />
+    <None Include="Assets\Font\HarmonyOS Sans\HarmonyOS_Sans_SC\LICENSE.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\ThirdParty\DOTween\DOTween.dll" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF.shader" />
     <None Include="Assets\Font\fonts\HarmonyOS Sans\HarmonyOS_Sans_Naskh_Arabic\LICENSE.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
@@ -112,15 +124,19 @@
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\ThirdParty\DOTween\DOTween.XML" />
     <None Include="Assets\Font\fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\LICENSE.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\Font\fonts\HarmonyOS Sans\HarmonyOS_Sans\LICENSE.txt" />
+    <None Include="Assets\Font\HarmonyOS Sans\HarmonyOS_Sans_Condensed\LICENSE.txt" />
+    <None Include="Assets\Font\HarmonyOS Sans\HarmonyOS_Sans_TC\LICENSE.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\Font\fonts\HarmonyOS Sans\HarmonyOS_Sans_Condensed\LICENSE.txt" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
     <None Include="Assets\ThirdParty\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\ThirdParty\DOTween\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -449,6 +465,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.2\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>Assets\ThirdParty\DOTween\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

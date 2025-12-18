@@ -2,18 +2,45 @@
 using SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
+using DG.Tweening;  // 引入 DOTween
 
 public class FishManager : MonoBehaviour
 {
+    /// <summary>
+    /// 鱼的类型枚举
+    /// </summary>
+    private enum FishMType
+    {
+        xiaochouyu = 1,
+        sahdingyu = 2,
+        sahyu = 3,
+    }
+
+    /// <summary>
+    /// 所有鱼的预制体字典
+    /// </summary>
+    private Dictionary<FishMType, GameObject> AllFishDic;
+
     private WebSocket webSocket;
     private readonly Dictionary<string, GameObject> activeFishes = new();
     private string partialMessage = ""; // 用于拼接分片
-
     private const string FISH_PREFAB_NAME = "FishPrefab";
     private const string FISH_SERVER_URL = "wss://slotgame.xin:8081";
 
+
+    private bool InitialEnd;
+
     async void Start()
     {
+        // 初始化鱼的预制体字典
+        AllFishDic = new Dictionary<FishMType, GameObject>
+        {
+            { FishMType.xiaochouyu, Resources.Load<GameObject>("FishPrefabs/xiaochouyu") },
+            { FishMType.sahdingyu, Resources.Load<GameObject>("FishPrefabs/sahdingyu") },
+            { FishMType.sahyu, Resources.Load<GameObject>("FishPrefabs/sahyu") },
+        };
+
         string roomId = RoomManager.Instance?.RoomInputField?.text?.Trim();
         if (string.IsNullOrEmpty(roomId))
         {
@@ -26,10 +53,12 @@ public class FishManager : MonoBehaviour
         webSocket.OnOpen += () =>
         {
             Debug.Log("✅ Connected to FishServer");
+
             var joinMsg = new JSONObject();
             joinMsg["type"] = "JOIN_FISH_ROOM";
             joinMsg["roomId"] = roomId;
             webSocket.SendText(joinMsg.ToString());
+
             Debug.Log($"📤 Sent JOIN_FISH_ROOM for room: {roomId}");
         };
 
@@ -46,6 +75,7 @@ public class FishManager : MonoBehaviour
         string chunk = System.Text.Encoding.UTF8.GetString(data);
         partialMessage += chunk;
         Debug.Log(partialMessage);
+
         // 尝试解析完整 JSON
         while (!string.IsNullOrEmpty(partialMessage))
         {
@@ -103,6 +133,7 @@ public class FishManager : MonoBehaviour
                 }
             }
         }
+
         return false;
     }
 
@@ -113,18 +144,14 @@ public class FishManager : MonoBehaviour
             string type = msg["type"];
             switch (type)
             {
-                case "fishSnapshot":
-                    HandleFishSnapshot(msg["data"].AsArray);
+                case "FISH_SYNC":
+                    HandleFishSync(msg["FishType"]);
                     break;
-                case "fishUpdate":
-                    HandleFishUpdate(msg["data"].AsArray);
-                    break;
-                case "fishRemoved":
-                    HandleFishRemoved(msg["id"]);
-                    break;
+
                 case "ERROR":
                     Debug.LogError("🐟 FishServer error: " + msg["message"]);
                     break;
+
                 default:
                     Debug.LogWarning("🐟 Unknown message type: " + type);
                     break;
@@ -136,11 +163,80 @@ public class FishManager : MonoBehaviour
         }
     }
 
-    // ====== 以下逻辑和之前一样 ======
-    void Update()
+    void HandleFishSync(JSONNode fishTypeNode)
     {
-#if UNITY_EDITOR || (!UNITY_WEBGL && !UNITY_IOS && !UNITY_ANDROID)
-        // Editor 或 Standalone 平台需要手动 Dispatch
+        Debug.Log("Received fish sync data: " + fishTypeNode.ToString()); // 打印接收到的鱼群数据
+
+        foreach (string type in fishTypeNode.Keys)
+        {
+            JSONArray groups = fishTypeNode[type].AsArray;
+            for (int g = 0; g < groups.Count; g++)
+            {
+                JSONArray fishes = groups[g].AsArray;
+                for (int i = 0; i < fishes.Count; i++)
+                {
+                    // 使用字段名来获取值
+                    string fishId = fishes[i]["id"];  // 获取fishId
+                    float x = fishes[i]["x"].AsFloat; // 获取x坐标
+                    float y = fishes[i]["y"].AsFloat; // 获取y坐标
+
+                    Debug.Log($"Received fish ID: {fishId}, X: {x}, Y: {y}"); // 打印调试信息
+
+                    // 创建或更新鱼
+                    CreateOrUpdateFish(type, fishId, x, y);
+                }
+            }
+        }
+    }
+
+
+void CreateOrUpdateFish(string type, string fishId, float x, float y)
+{
+        // 检查是否已经存在该鱼，如果已存在，则更新位置
+        if (activeFishes.TryGetValue(fishId, out GameObject existing))
+        {
+            // 先终止当前的动画
+            existing.transform.DOKill();  // 销毁之前的动画
+
+            // 获取目标位置
+            Vector3 targetPosition = new Vector3(x, y, 0);
+
+            // 使用 DOTween 来平滑过渡到目标位置
+            float moveTime = 1f;  // 设置动画时间
+            existing.transform.DOMove(targetPosition, moveTime).SetEase(Ease.Linear);
+        }
+        else
+        {
+            // 创建新的鱼
+            GameObject fishPrefab = AllFishDic[(FishMType)int.Parse(type)];
+            if (fishPrefab == null)
+            {
+                Debug.LogError($"❌ Fish prefab for type '{type}' not found!");
+                return;
+            }
+
+            // 初始位置
+            Vector3 initialPosition = new Vector3(x, y, 0);
+            GameObject fishGo = Instantiate(fishPrefab, initialPosition, Quaternion.identity, transform);
+
+            // 存储新创建的鱼
+            activeFishes[fishId] = fishGo;
+
+            // 使用 DOTween 为新创建的鱼添加平滑移动动画
+            Vector3 targetPosition = new Vector3(x, y, 0);
+            float moveTime = 1f;  // 设置动画时间
+            fishGo.transform.DOMove(targetPosition, moveTime).SetEase(Ease.Linear);
+        }
+    }
+
+
+
+
+// ====== 以下逻辑和之前一样 ======
+
+void Update()
+    {
+#if UNITY_EDITOR || (!UNITY_WEBGL && !UNITY_IOS && !UNITY_ANDROID) // Editor 或 Standalone 平台需要手动 Dispatch
         if (webSocket?.State == WebSocketState.Open)
         {
             webSocket.DispatchMessageQueue();
@@ -153,77 +249,5 @@ public class FishManager : MonoBehaviour
         foreach (var go in activeFishes.Values) Destroy(go);
         activeFishes.Clear();
         webSocket?.Close();
-    }
-
-    void HandleFishSnapshot(JSONArray snapshot)
-    {
-        foreach (var go in activeFishes.Values) Destroy(go);
-        activeFishes.Clear();
-
-        foreach (JSONNode fish in snapshot)
-        {
-            CreateOrUpdateFish(fish["id"], fish["type"], fish["x"], fish["y"]);
-        }
-        Debug.Log($"🐟 Received fishSnapshot with {snapshot.Count} fishes");
-    }
-
-    void HandleFishUpdate(JSONArray update)
-    {
-        var currentIds = new HashSet<string>();
-        foreach (JSONNode fish in update)
-        {
-            string id = fish["id"];
-            currentIds.Add(id);
-            CreateOrUpdateFish(id, fish["type"], fish["x"], fish["y"]);
-        }
-
-        // 移除消失的鱼
-        var toRemove = new List<string>();
-        foreach (var id in activeFishes.Keys)
-            if (!currentIds.Contains(id))
-                toRemove.Add(id);
-
-        foreach (var id in toRemove)
-        {
-            Destroy(activeFishes[id]);
-            activeFishes.Remove(id);
-        }
-    }
-
-    void HandleFishRemoved(string fishId)
-    {
-        if (activeFishes.TryGetValue(fishId, out GameObject go))
-        {
-            Destroy(go);
-            activeFishes.Remove(fishId);
-        }
-    }
-
-    void CreateOrUpdateFish(JSONNode id, JSONNode type, JSONNode x, JSONNode y)
-    {
-        string strId = id.Value;
-        int intType = type.AsInt;
-        float fx = x.AsFloat;
-        float fy = y.AsFloat;
-
-        if (activeFishes.TryGetValue(strId, out GameObject existing))
-        {
-            existing.GetComponent<FishView>()?.UpdatePosition(fx, fy);
-        }
-        else
-        {
-            GameObject prefab = Resources.Load<GameObject>(FISH_PREFAB_NAME);
-            if (prefab == null)
-            {
-                Debug.LogError($"❌ Fish prefab '{FISH_PREFAB_NAME}' not found!");
-                return;
-            }
-
-            GameObject fishGo = Instantiate(prefab, transform);
-            FishView view = fishGo.GetComponent<FishView>() ?? fishGo.AddComponent<FishView>();
-            view.Initialize(strId, intType);
-            view.UpdatePosition(fx, fy);
-            activeFishes[strId] = fishGo;
-        }
     }
 }
